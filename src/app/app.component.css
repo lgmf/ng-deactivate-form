@@ -1,0 +1,32 @@
+:host {
+  display: grid;
+}
+
+nav {
+  position: fixed;
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  background: black;
+  color: white;
+  padding: 12px;
+}
+
+nav > li {
+  display: flex;
+  align-items: center;
+}
+
+nav > li + li {
+  margin-left: 20px;
+}
+
+nav > li > a.-active {
+  background: white;
+  color: black;
+  padding: 12px;
+}
+
+main {
+  padding: 64px 24px
+}

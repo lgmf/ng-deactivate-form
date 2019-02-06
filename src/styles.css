@@ -1,0 +1,25 @@
+/* Add application styles & imports to this file! */
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Lato;
+  margin: 0;
+}
+
+ul,
+nav {
+  list-style: none;
+}
+
+li {
+  margin: 0;
+  padding: 0;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}

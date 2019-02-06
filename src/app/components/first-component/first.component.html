@@ -1,0 +1,14 @@
+<h2>{{ title }}</h2>
+
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+
+  <label for="name">Name</label>
+  <input id="name" type="text" formControlName="name" />
+
+  <label for="age">Age</label>
+  <input id="age" type="number" formControlName="age" />
+
+  <button type="submit">Send</button>
+</form>
+
+<p> Form pristine: {{ form.pristine }} </p>
