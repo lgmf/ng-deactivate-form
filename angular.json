@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "demo": {
+    "ng-deactivate-form": {
       "root": "",
       "sourceRoot": "src",
       "projectType": "application",
@@ -13,9 +13,9 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "docs",
-            "index": "src/index.html",
+            "outputPath": "dist/ng-deactivate-form",
             "baseHref": "/ng-deactivate-form/",
+            "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
             "tsConfig": "src/tsconfig.app.json",
@@ -46,18 +46,18 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "demo:build"
+            "browserTarget": "ng-deactivate-form:build"
           },
           "configurations": {
             "production": {
-              "browserTarget": "demo:build:production"
+              "browserTarget": "ng-deactivate-form:build:production"
             }
           }
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "demo:build"
+            "browserTarget": "ng-deactivate-form:build"
           }
         },
         "test": {
@@ -92,5 +92,5 @@
       }
     }
   },
-  "defaultProject": "demo"
+  "defaultProject": "ng-deactivate-form"
 }
