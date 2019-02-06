@@ -7,17 +7,17 @@ import { SecondComponent } from './components';
 
 const routes: Routes = [
   {
+    path: '',
+    redirectTo: '/first',
+    pathMatch: 'full'
+  },
+  {
     path: 'first',
     loadChildren: './components/first-component/first.module#FirstModule'
   },
   {
     path: 'second',
     component: SecondComponent
-  },
-  {
-    path: '**',
-    redirectTo: 'first',
-    pathMatch: 'full'
   }
 ];
 
