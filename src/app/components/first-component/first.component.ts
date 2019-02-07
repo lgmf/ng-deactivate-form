@@ -1,15 +1,20 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { CanComponentDeactivate, FirstForm } from 'src/app/models';
+import { fromEvent, Subject, Observable } from 'rxjs';
+import { takeUntil, skipWhile } from 'rxjs/operators';
 
 @Component({
   templateUrl: './first.component.html',
   styleUrls: ['./first.component.css']
 })
-export class FirstComponent implements OnInit, CanComponentDeactivate {
-  title: string;
+export class FirstComponent implements OnInit, OnDestroy, CanComponentDeactivate {
+
+  destroyed$ = new Subject<void>();
+  beforeUnload$ = fromEvent(window, 'beforeunload');
+
   form: FormGroup;
-  emptyState: FirstForm = {
+  initialState: FirstForm = {
     name: '',
     age: null
   };
@@ -17,38 +22,56 @@ export class FirstComponent implements OnInit, CanComponentDeactivate {
   constructor(private fb: FormBuilder) { }
 
   ngOnInit() {
-    this.title = 'First Component';
+    this.form = this.getForm(this.initialState);
 
-    this.form = this.fb.group({
-      name: [this.emptyState.name],
-      age: [this.emptyState.age]
-    });
-
-    this.form.valueChanges.subscribe(formValue => this.handleValueChanges(formValue));
+    this.handleValueChanges(this.form);
+    this.handleBeforeUnload(this.beforeUnload$);
   }
 
-  handleValueChanges(formValue: FirstForm) {
-    const isOnEmptyState = this.isOnEmptyState(formValue);
-
-    if (isOnEmptyState) {
-      this.form.markAsPristine();
-    }
+  ngOnDestroy() {
+    this.destroyed$.next();
+    this.destroyed$.complete();
   }
 
-  isOnEmptyState(currentState: FirstForm, emptyState = this.emptyState) {
+  getForm(state: FirstForm): FormGroup {
+    const keys = Object.keys(state);
+    const values = Object.values(state);
+    const form = this.buildForm(keys, values);
+
+    return this.fb.group(form);
+  }
+
+  handleValueChanges(form: FormGroup) {
+    form.valueChanges
+      .pipe(
+        skipWhile(formValue => !this.isOnEmptyState(formValue)),
+        takeUntil(this.destroyed$)
+      )
+      .subscribe(() => this.form.markAsPristine());
+  }
+
+  handleBeforeUnload(beforeUnload$: Observable<Event>) {
+    beforeUnload$
+      .pipe(takeUntil(this.destroyed$))
+      .subscribe(event => {
+        if (this.form.pristine) {
+          return;
+        }
+
+        return event.returnValue = true;
+      });
+  }
+
+  isOnEmptyState(currentState: FirstForm, initialState = this.initialState) {
     const keys = Object.keys(currentState);
     const values = Object.values(currentState);
 
     return values.every((value, index) => {
       const key = keys[index];
-      const initialValue = emptyState[key];
+      const initialValue = initialState[key];
 
       return value === initialValue;
     });
-  }
-
-  getInitialValueBy(key: string) {
-    return this.emptyState[key];
   }
 
   onSubmit() {
@@ -60,4 +83,14 @@ export class FirstComponent implements OnInit, CanComponentDeactivate {
       ? true
       : confirm('There are unsubmitted changes. Are you sure you want to leave?');
   }
+
+  private buildForm(keys: string[], values: any[]) {
+    return keys.reduce((prev, key) => {
+      return {
+        ...prev,
+        [key]: [values[key]]
+      }
+    }, {});
+  }
+
 }
